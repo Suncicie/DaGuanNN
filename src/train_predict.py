@@ -12,6 +12,8 @@ from keras.utils import np_utils
 
 
 def static_data_prepare():
+
+    # key word特征
     train_y = pd.read_csv(config.TRAIN_X, usecols=['label_c_numeric']).values
     kw_train_df = pd.read_csv('../data/feature/key_words_train_feature.df')
     kw_test_df = pd.read_csv('../data/feature/key_words_test_feature.df')
@@ -20,9 +22,11 @@ def static_data_prepare():
     kw_train_feature = kw_train_df.iloc[:, 2:]
     kw_test_feature = kw_test_df.iloc[:, 2:]
 
+    # tfidf特征
     tfidf_train_feature = pd.DataFrame(pickle.load(open('../data/feature/train_x_100.pkl', 'rb')))
     tfidf_test_feature = pd.DataFrame(pickle.load(open('../data/feature/test_x_100.pkl', 'rb')))
 
+    # key word 特征还要scale ？ 连接是为了scaler
     all_features = pd.concat((kw_train_feature, kw_test_feature), axis=0)
     scaler = MinMaxScaler()
     scaler.fit(all_features)
@@ -87,10 +91,10 @@ def deep_data_prepare(config, article_word2vec_model, word_seg_word2vec_model):
             d = d.split()
             line = []
             for token in d:
-                if token in sw_list\
-                        or token == ''\
+                if token in sw_list \
+                        or token == '' \
                         or token == ' ':
-                        # or token not in chi_lst\
+                    # or token not in chi_lst\
                     continue
                 if token in word2vec_model.stoi:
                     line.append(word2vec_model.stoi[token])
@@ -99,9 +103,9 @@ def deep_data_prepare(config, article_word2vec_model, word_seg_word2vec_model):
 
             train_x.append(line[:max_len])
             # if type == 'word':
-                # train_x.append(line[:max_len])
+            # train_x.append(line[:max_len])
             # else:
-                # train_x.append(line[-max_len:])
+            # train_x.append(line[-max_len:])
         return train_x
 
     train_x_word = word2id(train_word, type='word')
@@ -121,20 +125,32 @@ def deep_data_prepare(config, article_word2vec_model, word_seg_word2vec_model):
 
     UNK_CHAR = PAD_CHAR
     UNK_WORD = PAD_WORD
-    train_x_char = sequence.pad_sequences(train_x_char, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    test_x_char = sequence.pad_sequences(test_x_char, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    train_x_word = sequence.pad_sequences(train_x_word, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
-    test_x_word = sequence.pad_sequences(test_x_word, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
+    train_x_char = sequence.pad_sequences(train_x_char, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post',
+                                          truncating='post', value=UNK_CHAR)
+    test_x_char = sequence.pad_sequences(test_x_char, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post',
+                                         truncating='post', value=UNK_CHAR)
+    train_x_word = sequence.pad_sequences(train_x_word, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post',
+                                          truncating='post', value=UNK_WORD)
+    test_x_word = sequence.pad_sequences(test_x_word, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post',
+                                         truncating='post', value=UNK_WORD)
 
-    train_x_char_left = sequence.pad_sequences(train_char_left, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    test_x_char_left = sequence.pad_sequences(test_char_left, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    train_x_word_left = sequence.pad_sequences(train_word_left, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
-    test_x_word_left = sequence.pad_sequences(test_word_left, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
+    train_x_char_left = sequence.pad_sequences(train_char_left, maxlen=config.CHAR_MAXLEN, dtype='int32',
+                                               padding='post', truncating='post', value=UNK_CHAR)
+    test_x_char_left = sequence.pad_sequences(test_char_left, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post',
+                                              truncating='post', value=UNK_CHAR)
+    train_x_word_left = sequence.pad_sequences(train_word_left, maxlen=config.WORD_MAXLEN, dtype='int32',
+                                               padding='post', truncating='post', value=UNK_WORD)
+    test_x_word_left = sequence.pad_sequences(test_word_left, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post',
+                                              truncating='post', value=UNK_WORD)
 
-    train_x_char_right = sequence.pad_sequences(train_char_right, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    test_x_char_right = sequence.pad_sequences(test_char_right, maxlen=config.CHAR_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_CHAR)
-    train_x_word_right = sequence.pad_sequences(train_word_right, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
-    test_x_word_right = sequence.pad_sequences(test_word_right, maxlen=config.WORD_MAXLEN, dtype='int32', padding='post', truncating='post', value=UNK_WORD)
+    train_x_char_right = sequence.pad_sequences(train_char_right, maxlen=config.CHAR_MAXLEN, dtype='int32',
+                                                padding='post', truncating='post', value=UNK_CHAR)
+    test_x_char_right = sequence.pad_sequences(test_char_right, maxlen=config.CHAR_MAXLEN, dtype='int32',
+                                               padding='post', truncating='post', value=UNK_CHAR)
+    train_x_word_right = sequence.pad_sequences(train_word_right, maxlen=config.WORD_MAXLEN, dtype='int32',
+                                                padding='post', truncating='post', value=UNK_WORD)
+    test_x_word_right = sequence.pad_sequences(test_word_right, maxlen=config.WORD_MAXLEN, dtype='int32',
+                                               padding='post', truncating='post', value=UNK_WORD)
 
     train_y = np_utils.to_categorical(train_y, num_classes=config.n_class)
     print('train_x char shape is: ', train_x_char.shape)
@@ -191,12 +207,15 @@ def deep_data_cache():
     char_init_embed = init_embedding(config, article_word2vec_model)
     word_init_embed = init_embedding(config, word_seg_word2vec_model)
     os.makedirs('../data/cache/', exist_ok=True)
-    pickle.dump((train,  train_y, test, char_init_embed, word_init_embed), open('../data/cache/clean_deep_data_{}_{}.pkl'.format(config.WORD_MAXLEN, config.EMBED_SIZE), 'wb'))
+    pickle.dump((train, train_y, test, char_init_embed, word_init_embed),
+                open('../data/cache/clean_deep_data_{}_{}.pkl'.format(config.WORD_MAXLEN, config.EMBED_SIZE), 'wb'))
 
 
 def deep_data_process():
     # deep_data_cache()
-    train, train_y, test, char_init_embed, word_init_embed = pickle.load(open('../data/cache/clean_deep_data_{}_{}.pkl'.format(config.WORD_MAXLEN, config.EMBED_SIZE), 'rb'))
+    # 如上存储，所以要经过上面处理先
+    train, train_y, test, char_init_embed, word_init_embed = pickle.load(
+        open('../data/cache/clean_deep_data_{}_{}.pkl'.format(config.WORD_MAXLEN, config.EMBED_SIZE), 'rb'))
     config.max_c_features = len(char_init_embed)
     config.max_w_features = len(word_init_embed)
     config.char_init_embed = char_init_embed
@@ -206,8 +225,10 @@ def deep_data_process():
     model.train_predict(train, train_y, test, option=config.option)
     # model.rerun(test_x)
 
+
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--gpu', type=str, default='6')
     parser.add_argument('--option', type=int)
@@ -217,6 +238,7 @@ if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
     import tensorflow as tf
     from keras.backend.tensorflow_backend import set_session
+
     tf_config = tf.ConfigProto()
     # tf_config.gpu_options.per_process_gpu_memory_fraction = 0.8
     set_session(tf.Session(config=tf_config))
@@ -228,4 +250,3 @@ if __name__ == '__main__':
     config.model_name = args.model
     # static_mode_process()
     deep_data_process()
-
