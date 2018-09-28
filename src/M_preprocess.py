@@ -77,7 +77,7 @@ vec = TfidfVectorizer(ngram_range=(1,2),min_df=3, max_df=0.9,use_idf=1,smooth_id
 trn_term_doc = vec.fit_transform(train[column])
 test_term_doc = vec.transform(test[column])
 
-# tf-idf 并且降维
+# tf-idf 并且降维 lsa降维
 vectorizer = TfidfVectorizer(ngram_range=(1,2),
                              stop_words=sw_list,
                              sublinear_tf=True,
@@ -239,6 +239,8 @@ def train_w2v_model(type='article', min_freq=5, size=100):
 model = train_w2v_model(type='char', size=100)
 model = train_w2v_model(type='word', size=100)
 
+# -------glove-------glove文件中
+
 
 # 数据增强，只对少类别增强了一部分
 # 随机数添加数据
@@ -265,3 +267,8 @@ def run_enhance():
 enhance_df = run_enhance()
 enhance_df.to_csv('../../data/Enhance.train.csv')
 enhance_df['class'].value_counts().plot.bar(figsize=(10,6), fontsize=20, rot=0)
+
+# 逆序...
+
+
+# 基本MLmodel 参见 BaseEnsembelmodel,stacking也在里面
